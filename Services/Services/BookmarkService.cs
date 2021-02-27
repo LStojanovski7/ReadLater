@@ -42,5 +42,37 @@ namespace ReadLater.Services
                                                             .ToList();
             }
         }
+
+        public Bookmark GetBookmark(int id)
+        {
+            return _unitOfWork.Repository<Bookmark>().FindById(id);
+        }
+
+        public List<Bookmark> GetBookmarks()
+        {
+            return _unitOfWork.Repository<Bookmark>().Query().Get().ToList();
+        }
+
+        public void UpdateBookmark(Bookmark bookmark)
+        {
+            var ob = _unitOfWork.Repository<Bookmark>().FindById(bookmark);
+
+            if(ob != null)
+            {
+                _unitOfWork.Repository<Bookmark>().Update(bookmark);
+                _unitOfWork.Save();
+            }
+        }
+
+        public void DeleteBookmark(Bookmark bookmark)
+        {
+            var ob = _unitOfWork.Repository<Bookmark>().FindById(bookmark.ID);
+
+            if(ob != null)
+            {
+                _unitOfWork.Repository<Bookmark>().Delete(bookmark);
+                _unitOfWork.Save();
+            }
+        }
     }
 }
