@@ -12,6 +12,7 @@ using ReadLater.Services;
 
 namespace MVC.Controllers
 {
+    [Authorize]
     public class CategoriesController : Controller
     {
         ICategoryService _categoryService;
@@ -24,6 +25,16 @@ namespace MVC.Controllers
         {
             List<Category> model = _categoryService.GetCategories();
             return View(model);
+        }
+
+        // used for populating dropdown lists
+        public List<Category> GetAllCategories()
+        {
+            List<Category> categories = new List<Category>();
+
+            categories = _categoryService.GetCategories();
+
+            return categories;
         }
 
         // GET: Categories/Details/5

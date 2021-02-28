@@ -55,9 +55,7 @@ namespace ReadLater.Services
 
         public void UpdateBookmark(Bookmark bookmark)
         {
-            var ob = _unitOfWork.Repository<Bookmark>().FindById(bookmark);
-
-            if(ob != null)
+            if(bookmark != null)
             {
                 _unitOfWork.Repository<Bookmark>().Update(bookmark);
                 _unitOfWork.Save();
@@ -66,9 +64,7 @@ namespace ReadLater.Services
 
         public void DeleteBookmark(Bookmark bookmark)
         {
-            var ob = _unitOfWork.Repository<Bookmark>().FindById(bookmark.ID);
-
-            if(ob != null)
+            if(bookmark != null)
             {
                 _unitOfWork.Repository<Bookmark>().Delete(bookmark);
                 _unitOfWork.Save();

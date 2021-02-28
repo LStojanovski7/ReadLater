@@ -29,5 +29,9 @@ namespace MVC.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<ReadLater.Entities.Bookmark> Bookmarks { get; set; }
+
+        public System.Data.Entity.DbSet<ReadLater.Entities.Category> Categories { get; set; }
     }
 }

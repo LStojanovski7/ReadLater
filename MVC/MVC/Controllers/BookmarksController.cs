@@ -9,25 +9,40 @@ using ReadLater.Services;
 
 namespace MVC.Controllers
 {
+    [Authorize]
     public class BookmarksController : Controller
     {
         IBookmarkService _bookmarkService;
 
         public BookmarksController(IBookmarkService bookmarkService)
         {
-            this._bookmarkService = bookmarkService;
+            _bookmarkService = bookmarkService;
         }
 
         // GET: Bookmarks
         public ActionResult Index()
         {
-            return View();
+            List<Bookmark> bookmarksModel = _bookmarkService.GetBookmarks();
+
+            return View(bookmarksModel);
         }
 
         // GET: Bookmarks/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
+            }
+
+            Bookmark bookmark = _bookmarkService.GetBookmark((int)id);
+
+            if (bookmark == null)
+            {
+                return new HttpStatusCodeResult(System.Net.HttpStatusCode.NotFound);
+            }
+
+            return View(bookmark);
         }
 
         // GET: Bookmarks/Create
@@ -38,62 +53,82 @@ namespace MVC.Controllers
 
         // POST: Bookmarks/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(Bookmark bookmark)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add insert logic here
+                bookmark.CreateDate = DateTime.Now;         // current datetime as default
+                _bookmarkService.CreateBookmark(bookmark);
 
                 return RedirectToAction("Index");
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(bookmark);
         }
 
         // GET: Bookmarks/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
+            }
+
+            Bookmark bookmark = _bookmarkService.GetBookmark((int)id);
+
+            if (bookmark == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(bookmark);
         }
 
         // POST: Bookmarks/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Bookmark bookmark)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add update logic here
+                bookmark.CreateDate = DateTime.Now;     // It has to be set like this, otherwise it sets the time to 0001/01/01 which is outside of the range of the SQL server
+                _bookmarkService.UpdateBookmark(bookmark);
 
                 return RedirectToAction("Index");
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(bookmark);
         }
 
         // GET: Bookmarks/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
+            }
+
+            Bookmark bookmark = _bookmarkService.GetBookmark((int)id);
+
+            if (bookmark == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(bookmark);
         }
 
         // POST: Bookmarks/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id)
         {
-            try
-            {
-                // TODO: Add delete logic here
+            Bookmark bookmark = _bookmarkService.GetBookmark(id);
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            _bookmarkService.DeleteBookmark(bookmark);
+
+            return RedirectToAction("Index");
         }
     }
 }
